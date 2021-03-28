@@ -43,7 +43,6 @@
 
 @mixin contentStyle {
   padding-top: 1rem;
-  letter-spacing: 0.1rem;
 
   p:not(:last-of-type) {
     margin-bottom: 3rem;

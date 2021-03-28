@@ -34,17 +34,23 @@
   }
 
   &__submenu {
-    transition: all 0.3s;
-
     @include respond(tab-port) {
-      & > .nav-menu__item:not(:first-of-type) {
-        opacity: 0;
+      & > .nav-menu__item {
+        &:not(:first-of-type) {
+          opacity: 0;
+          height: 0;
+        }
       }
-
+      
       &:hover {
         .nav-menu__item {
-          background-color: rgba($color-grey-dark, 0.6);
           opacity: 1;
+          height: auto;
+          background-color: rgba($color-grey-dark, 0.6);
+
+          &:not(:first-of-type) {
+            border-right: none;
+          }
         }
       }
     }
@@ -160,10 +166,6 @@
   .checked {
     background-color: rgba($color-grey-dark, 0.9);
 
-    // @include respond(tab-port) {
-    //   background-color: transparent;
-    // }
-
     .nav-menu__items {
       padding-bottom: 1rem;
     }
@@ -191,14 +193,6 @@
         height: 4rem;
         z-index: 1;
         padding: 0.5rem 2rem;
-
-        // @include respond(tab-port) {
-        //   padding: 0.5rem 1.5rem;
-        // }
-
-        // @include respond(tab-land) {
-        //   padding: 3rem 3rem;
-        // }
       }
 
       & ~ .nav-menu__submenu {

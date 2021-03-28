@@ -10,7 +10,7 @@ const page = (sequelize: any, DataTypes: any) => {
     title: { type: DataTypes.STRING },
     className: { type: DataTypes.STRING },
     route: { type: DataTypes.STRING, allowNull: false, unique: true },
-    navOrder: { type: DataTypes.INTEGER },
+    navOrder: { type: DataTypes.DOUBLE },
     omitDefaultHeader: { type: DataTypes.BOOLEAN },
     omitDefaultFooter: { type: DataTypes.BOOLEAN },
 

@@ -9,6 +9,7 @@ import {
   userContext,
   pagesContext,
 } from '@/context'
+import Media from '../Media'
 
 type Props = {
   mainTitle: string

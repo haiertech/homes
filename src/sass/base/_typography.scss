@@ -1,5 +1,5 @@
 body {
-  font-family: 'Montserrat', 'Lato', sans-serif;
+  font-family: 'Gotham', 'Montserrat', 'Lato', sans-serif;
   font-weight: 400;
   line-height: 1.7;
   color: $color-grey-dark;
@@ -9,7 +9,6 @@ body {
 .heading-primary {
   color: $color-grey-light;
   display: inline-block;
-  font-family: 'Raleway', sans-serif;
 
   @include respond(tab-land) {
     display: flex;
@@ -19,8 +18,7 @@ body {
 
   &--main {
     font-size: 5rem;
-    letter-spacing: 0.5rem;
-    font-weight: 500;
+    font-weight: 400;
     display: block;
     line-height: 1;
     margin-bottom: 1rem;
@@ -46,7 +44,6 @@ body {
 }
 
 .heading-secondary {
-  font-family: 'Raleway', sans-serif;
   font-size: 3rem;
   font-weight: 700;
   display: block;
@@ -57,7 +54,7 @@ body {
 .heading-tertiary,
 .heading-tertiary--dark {
   font-size: 2rem;
-  font-weight: 500;
+  font-weight: 700;
   color: $color-grey-dark;
 
   &--light {
