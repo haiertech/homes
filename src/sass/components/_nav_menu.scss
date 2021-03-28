@@ -39,14 +39,25 @@
         &:not(:first-of-type) {
           opacity: 0;
           height: 0;
+          padding-top: 0;
+          padding-bottom: 0;
         }
       }
       
       &:hover {
-        .nav-menu__item {
+        & > .nav-menu__item {
           opacity: 1;
           height: auto;
           background-color: rgba($color-grey-dark, 0.6);
+          // padding: 0.5rem 1.5rem;
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
+
+          @include respond(tab-land) {
+            // padding: 1.5rem 3rem;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+          }
 
           &:not(:first-of-type) {
             border-right: none;
