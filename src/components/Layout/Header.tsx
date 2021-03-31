@@ -121,7 +121,8 @@ const Header: React.FC<Props> = (props) => {
   return (
     <header className="header">
       <div className="header__container">
-        <h1 className="heading-primary">{renderTitle()}</h1>
+        <h1 style={{ display: 'none' }} className="heading-primary">{renderTitle()}</h1>
+        <Media src="/images/Homes/Vertical/HaierHomes_v1_Morning.png" alt="logo" className="header__brand" />
         {renderNav()}
       </div>
     </header>

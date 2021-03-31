@@ -1,23 +1,31 @@
 .header {
   background: linear-gradient(
     45deg,
-    lighten($color-primary, 0%),
-    darken($color-primary, 30%)
+    lighten($color-secondary, 10%),
+    darken($color-secondary, 10%)
   );
-  height: 25rem;
+  // height: 25rem;
+  height: 60vh;
+
+  @include respond(tab-port) {
+    height: 75vh;
+  }
+
+  @include respond(tab-land) {
+    height: 90vh;
+  }
 
   &__container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: space-around;
     align-items: center;
-    flex-wrap: wrap;
+    height: 100%;
 
     max-width: $max-section-width;
     margin: 0 auto;
     padding: 6rem 0;
     text-align: center;
-    justify-content: center;
-    flex-direction: column;
     
     @include respond(tab-port) {
       height: 100%;
@@ -25,9 +33,14 @@
     }
 
     @include respond(tab-land) {
-      justify-content: space-between;
-      flex-direction: row;
+      // justify-content: space-between;
+      // flex-direction: row;
     }
+  }
+
+  &__brand {
+    max-width: 90vw;
+    max-height: 60%;
   }
 
   &__menu-item {
