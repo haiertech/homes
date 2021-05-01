@@ -4,10 +4,15 @@
 .header {
   background: linear-gradient(
     45deg,
-    lighten($color-primary, 10%),
-    darken($color-primary, 30%)
+    lighten($color-secondary, 10%),
+    darken($color-secondary, 10%)
   );
   height: 40rem;
+}
+
+.brand {
+  max-width: 90vw;
+  max-height: 60%;
 }
 
 .container {
@@ -29,8 +34,9 @@
   }
 
   @include respond(tab-land) {
-    justify-content: space-between;
-    flex-direction: row;
+    justify-content: space-around;
+    // justify-content: space-between;
+    // flex-direction: row;
   }
 }
 
