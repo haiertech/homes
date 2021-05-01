@@ -15,8 +15,8 @@ const blog = {
   title: 'Mocha Test Blog',
   content: 'This is some test blog content.',
   tags: 'test, blog',
-  published: true,
-  mainMedia: 'some-picture.jpg',
+  isPublished: true,
+  media: 'some-picture.jpg',
   publishDate: new Date('2014-03-01').toISOString(),
 }
 
@@ -31,7 +31,7 @@ describe('/api/blogs', () => {
     expect(status).to.equal(200) &&
       expect(created.title).to.equal(blog.title) &&
       expect(created.content).to.equal(blog.content) &&
-      expect(created.mainMedia).to.equal(blog.mainMedia) &&
+      expect(created.media).to.equal(blog.media) &&
       expect(created.tags).to.be.an('array')
   }).timeout(10000)
 
@@ -52,7 +52,7 @@ describe('/api/blogs', () => {
       )
       let allArePublished = true
       _.forEach(blogs, (found) => {
-        if (!found.published) allArePublished = false
+        if (!found.isPublished) allArePublished = false
       })
 
       expect(status).to.equal(200) &&
@@ -71,7 +71,7 @@ describe('/api/blogs', () => {
       expect(status).to.equal(200) &&
         expect(found.title).to.equal(blog.title) &&
         expect(found.content).to.equal(blog.content) &&
-        expect(found.mainMedia).to.equal(blog.mainMedia) &&
+        expect(found.media).to.equal(blog.media) &&
         expect(found.tags).to.be.an('array')
     }).timeout(10000)
 
@@ -85,7 +85,7 @@ describe('/api/blogs', () => {
         content: 'This is updated test blog content.',
       }
       const { data: updated, status } = await axios.put(
-        `${rootURL}/api/blogs/${found._id}`,
+        `${rootURL}/api/blogs/${found.id}`,
         updatedBlog,
         axiosConfig
       )
@@ -93,7 +93,7 @@ describe('/api/blogs', () => {
       expect(status).to.equal(200) &&
         expect(updated.title).to.equal(updatedBlog.title) &&
         expect(updated.content).to.equal(updatedBlog.content) &&
-        expect(updated.mainMedia).to.equal(updatedBlog.mainMedia) &&
+        expect(updated.media).to.equal(updatedBlog.media) &&
         expect(updated.tags).to.be.an('array')
     }).timeout(10000)
 
@@ -103,7 +103,7 @@ describe('/api/blogs', () => {
         axiosConfig
       )
       const { status } = await axios.delete(
-        `${rootURL}/api/blogs/${found._id}`,
+        `${rootURL}/api/blogs/${found.id}`,
         axiosConfig
       )
 

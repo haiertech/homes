@@ -1,4 +1,4 @@
-import { User } from 'types'
+import { User } from '@/types'
 import { createContext } from 'react'
 
 type UserContext = {
@@ -8,7 +8,7 @@ type UserContext = {
 
 export default createContext<UserContext>({
   currentUser: {
-    _id: '',
+    id: '',
     password: '',
 
     // Personal Info
@@ -39,12 +39,13 @@ export default createContext<UserContext>({
     cart: [],
 
     // Account creation date
-    created: new Date().toISOString(),
+    updatedAt: new Date(),
+    createdAt: new Date(),
 
     // Etc
     isAdmin: false,
     isSubscribed: false,
-    isBanned: false
+    isBanned: false,
   },
-  setCurrentUser: (user: User) => {}
+  setCurrentUser: (user: User) => {},
 })

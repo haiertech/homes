@@ -1,4 +1,4 @@
-import { Page } from 'types'
+import { Page, Section } from '@/types'
 import React, { useState, useContext } from 'react'
 import axios from 'axios'
 import _ from 'lodash'
@@ -47,21 +47,22 @@ const PageBuilder = (props: Props) => {
     page: {
       className: '',
       route: '',
-      sections: [] as string[],
+      sections: [] as Section[],
       css: '',
 
       // For type safety
       omitDefaultFooter: false,
       omitDefaultHeader: false,
-      _id: 'fake_id',
-      created: new Date().toISOString(),
+      id: 'fakeid',
+      updatedAt: new Date(),
+      createdAt: new Date(),
       title: 'Page Preview',
       navOrder: 0,
     },
   }
 
   if (props.page) {
-    INITIAL_STATE.id = props.page._id
+    INITIAL_STATE.id = props.page.id
     INITIAL_STATE.title = props.page.title
     INITIAL_STATE.route = props.page.route
     INITIAL_STATE.navOrder = props.page.navOrder
@@ -70,9 +71,10 @@ const PageBuilder = (props: Props) => {
     INITIAL_STATE.omitDefaultFooter = !!props.page.omitDefaultFooter
     INITIAL_STATE.css = props.page.css
     INITIAL_STATE.sections = _.map(props.page.sections, (section) => {
-      const parsedSection = JSON.parse(section)
-      parsedSection.tags = _.join(parsedSection.tags, ', ')
-      return parsedSection
+      return {
+        ...section,
+        tags: _.join(section.tags, ', '),
+      }
     })
     INITIAL_STATE.page = props.page
   }
@@ -84,13 +86,10 @@ const PageBuilder = (props: Props) => {
       state.sections,
       (section, i) => i !== index
     )
-    const newPageSections = _.map(newSections, (section) =>
-      JSON.stringify(section)
-    )
     setState({
       ...state,
       sections: newSections,
-      page: { ...state.page, sections: newPageSections },
+      page: { ...state.page, sections: newSections },
     })
   }
 
@@ -108,10 +107,9 @@ const PageBuilder = (props: Props) => {
 
     const newPageSections = _.map(
       state.page.sections,
-      (jsonSection, i) => {
-        const section = JSON.parse(jsonSection)
-
+      (section, i) => {
         if (index === i) {
+          // @ts-ignore
           section[key] = value
         }
 
@@ -121,7 +119,7 @@ const PageBuilder = (props: Props) => {
           // )
         }
 
-        return JSON.stringify(section)
+        return section
       }
     )
 
@@ -234,14 +232,11 @@ const PageBuilder = (props: Props) => {
       0,
       newSections.splice(oldIndex, 1)[0]
     )
-    const newPageSections = _.map(newSections, (section) =>
-      JSON.stringify(section)
-    )
 
     setState({
       ...state,
       sections: [...newSections],
-      page: { ...state.page, sections: newPageSections },
+      page: { ...state.page, sections: [...newSections] },
     })
   }
 
@@ -325,7 +320,7 @@ const PageBuilder = (props: Props) => {
       state.page.sections,
       (section) => section
     )
-    newPageSections.push(JSON.stringify(newSection))
+    newPageSections.push(newSection as any)
 
     setState({
       ...state,
@@ -409,11 +404,7 @@ const PageBuilder = (props: Props) => {
     const { id } = state
     if (id) {
       return (
-        <Button
-          type="delete"
-          onClick={deletePage}
-          submittedText="Deleting..."
-        >
+        <Button type="delete" onClick={deletePage}>
           Delete Page
         </Button>
       )
@@ -559,9 +550,7 @@ const PageBuilder = (props: Props) => {
         </div>
 
         <div className={styles.sectionBottom}>
-          <Button onClick={handleSubmit} submittedText="Saving...">
-            Submit
-          </Button>
+          <Button onClick={handleSubmit}>Submit</Button>
 
           {renderDelete()}
         </div>

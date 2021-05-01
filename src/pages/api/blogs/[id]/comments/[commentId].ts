@@ -1,21 +1,18 @@
-import { Database } from 'types'
+import { Database, Comment } from '@/types'
 import { NextApiRequest, NextApiResponse } from 'next'
 import _ from 'lodash'
 import serverContext from '@/serverContext'
 
 const deleteComment = async (
-  blogId: string,
   commentId: string,
   database: Database
 ) => {
-  const { destroy, Comment, findOne, update, Blog } = database
-  const blog = await findOne(Blog, { _id: blogId })
-
-  blog.comments = _.filter(blog.comments, (foundComment, i) => {
-    return foundComment._id !== commentId
+  const { destroy, findOne, EntityType } = database
+  const comment = await findOne<Comment>(EntityType.Comment, {
+    id: commentId,
   })
-  await update(Blog, { _id: blogId }, { comments: blog.comments })
-  await destroy(Comment, { _id: commentId })
+  if (!comment) throw new Error('Comment not found')
+  await destroy(EntityType.Comment, comment)
 
   return 'comment deleted'
 }
@@ -31,7 +28,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     typeof req.query.commentId !== 'string'
   ) {
     return await done(500, {
-      message: 'id was not a string'
+      message: 'id was not a string',
     })
   }
 
@@ -45,48 +42,40 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === 'PUT') {
-    const { Comment, findOne, update } = database
+    const { EntityType, findOne, save } = database
 
-    let comment = await findOne(Comment, { _id: req.query.commentId })
+    let comment = await findOne<Comment>(EntityType.Comment, {
+      id: req.query.commentId,
+    })
+    if (!comment) throw new Error('Comment not found')
 
-    // @ts-ignore not sure what it thinks is going on here
-    if (!user || !comment.author._id == user._id || !user.isAdmin) {
+    if (!user || (comment.author.id !== user.id && !user.isAdmin)) {
       return await done(403, {
         message: 'You are not allowed to do that.',
       })
     }
 
-    await update(
-      Comment,
-      { _id: req.query.commentId },
-      { content: req.body.content }
-    )
-    comment = await findOne(
-      Comment,
-      { _id: req.query.commentId },
-      { include: ['author'] }
-    )
+    comment.content = req.body.content
+    comment = await save(EntityType.Comment, comment)
 
     return await done(200, comment)
   }
 
   if (req.method === 'DELETE') {
-    const { Comment, findOne, update } = database
+    const { EntityType, findOne } = database
 
-    let comment = await findOne(Comment, { _id: req.query.commentId })
+    let comment = await findOne<Comment>(EntityType.Comment, {
+      id: req.query.commentId,
+    })
+    if (!comment) throw new Error('Comment not found')
 
-    // @ts-ignore not sure what it thinks is going on here
-    if (!user || !comment.author._id == user._id || !user.isAdmin) {
+    if (!user || (comment.author.id !== user.id && !user.isAdmin)) {
       return await done(403, {
         message: 'You are not allowed to do that.',
       })
     }
 
-    const message = await deleteComment(
-      req.query.id,
-      req.query.commentId,
-      database
-    )
+    const message = await deleteComment(req.query.commentId, database)
     return await done(200, message)
   }
 

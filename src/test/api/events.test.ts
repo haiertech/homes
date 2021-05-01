@@ -15,8 +15,8 @@ const event = {
   title: 'Mocha Test Event',
   content: 'This is some test event content.',
   tags: 'test, event',
-  published: true,
-  mainMedia: 'some-picture.jpg',
+  isPublished: true,
+  media: 'some-picture.jpg',
   date: new Date('2024-03-01').toISOString(),
   latitude: 123,
   longitude: 321,
@@ -33,7 +33,7 @@ describe('/api/events', () => {
     expect(status).to.equal(200) &&
       expect(created.title).to.equal(event.title) &&
       expect(created.content).to.equal(event.content) &&
-      expect(created.mainMedia).to.equal(event.mainMedia) &&
+      expect(created.media).to.equal(event.media) &&
       expect(created.latitude).to.equal(event.latitude) &&
       expect(created.longitude).to.equal(event.longitude) &&
       expect(created.tags).to.be.an('array')
@@ -56,7 +56,7 @@ describe('/api/events', () => {
       )
       let allArePublished = true
       _.forEach(events, (found) => {
-        if (!found.published) allArePublished = false
+        if (!found.isPublished) allArePublished = false
       })
 
       expect(status).to.equal(200) &&
@@ -75,7 +75,7 @@ describe('/api/events', () => {
       expect(status).to.equal(200) &&
         expect(found.title).to.equal(event.title) &&
         expect(found.content).to.equal(event.content) &&
-        expect(found.mainMedia).to.equal(event.mainMedia) &&
+        expect(found.media).to.equal(event.media) &&
         expect(found.tags).to.be.an('array')
     }).timeout(10000)
 
@@ -89,7 +89,7 @@ describe('/api/events', () => {
         content: 'This is updated test event content.',
       }
       const { data: updated, status } = await axios.put(
-        `${rootURL}/api/events/${found._id}`,
+        `${rootURL}/api/events/${found.id}`,
         updatedEvent,
         axiosConfig
       )
@@ -97,7 +97,7 @@ describe('/api/events', () => {
       expect(status).to.equal(200) &&
         expect(updated.title).to.equal(updatedEvent.title) &&
         expect(updated.content).to.equal(updatedEvent.content) &&
-        expect(updated.mainMedia).to.equal(updatedEvent.mainMedia) &&
+        expect(updated.media).to.equal(updatedEvent.media) &&
         expect(updated.tags).to.be.an('array')
     }).timeout(10000)
 
@@ -107,7 +107,7 @@ describe('/api/events', () => {
         axiosConfig
       )
       const { status } = await axios.delete(
-        `${rootURL}/api/events/${found._id}`,
+        `${rootURL}/api/events/${found.id}`,
         axiosConfig
       )
 

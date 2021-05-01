@@ -1,4 +1,4 @@
-import { Event } from 'types'
+import { Event } from '@/types'
 import React, { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
@@ -6,7 +6,7 @@ import moment from 'moment'
 import { userContext } from '@/context'
 import keys from '@/keys'
 import { Map } from '@/components'
-import { SectionStandard } from '@/Sections'
+import { SectionStandard } from '@/components'
 
 const EventsShow = (props: { event: Event }) => {
   const { currentUser } = useContext(userContext)
@@ -28,8 +28,8 @@ const EventsShow = (props: { event: Event }) => {
   const renderMap = () => (
     <Map
       className="u-padding-top-medium"
-      latitude={event.latitude}
-      longitude={event.longitude}
+      latitude={event.latitude || 0}
+      longitude={event.longitude || 0}
       zoom={16}
     />
   )

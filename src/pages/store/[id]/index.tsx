@@ -1,4 +1,4 @@
-import { Product } from 'types'
+import { Product } from '@/types'
 import React, { useState, useEffect, useContext } from 'react'
 import Link from 'next/link'
 import axios from 'axios'
@@ -6,7 +6,7 @@ import _ from 'lodash'
 import { useRouter } from 'next/router'
 import { userContext, storeContext } from '@/context'
 import keys from '@/keys'
-import { SectionStandard } from '@/Sections'
+import { SectionStandard } from '@/components'
 
 const StoreShow = (props: { product: Product }) => {
   const { currentUser } = useContext(userContext)
@@ -39,7 +39,7 @@ const StoreShow = (props: { product: Product }) => {
   const renderAddToCart = (product: Product) => {
     const quantityInCart = _.filter(
       cart,
-      (cartProduct) => cartProduct._id === product._id
+      (cartProduct) => cartProduct.id === product.id
     ).length
     let message = 'Add to cart'
     if (quantityInCart) message += ` (${quantityInCart} now)`
@@ -63,7 +63,7 @@ const StoreShow = (props: { product: Product }) => {
         <>
           {renderAddToCart(product)}
           <br />
-          <Link href={`/store/checkout?id=${product._id}`}>
+          <Link href={`/store/checkout?id=${product.id}`}>
             <a>Buy it now</a>
           </Link>
         </>

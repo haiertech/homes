@@ -1,4 +1,4 @@
-import { Product, Order } from 'types'
+import { Product, Order } from '@/types'
 import React, { useState, useEffect, useContext } from 'react'
 import Error from 'next/error'
 import axios from 'axios'
@@ -27,7 +27,7 @@ const Orders = () => {
   const renderProducts = (products: Product[]) => {
     return _.map(products, (product) => {
       return (
-        <p className="order__product" key={product._id}>
+        <p className="order__product" key={product.id}>
           {product.title}
         </p>
       )
@@ -37,13 +37,13 @@ const Orders = () => {
   const markShipped = (shippedOrder: Order) => {
     const newOrder = {
       ...shippedOrder,
-      shipped: !shippedOrder.shipped,
+      isShipped: !shippedOrder.isShipped,
     }
     axios
-      .put(`/api/store/orders/${shippedOrder._id}`, newOrder)
+      .put(`/api/store/orders/${shippedOrder.id}`, newOrder)
       .then((response) => {
         const newOrders = _.map(orders, (order) => {
-          if (order._id === newOrder._id) {
+          if (order.id === newOrder.id) {
             order = newOrder
           }
           return order
@@ -62,11 +62,11 @@ const Orders = () => {
     if (!confirm) return
 
     axios
-      .delete(`/api/store/orders/${deletedOrder._id}`)
+      .delete(`/api/store/orders/${deletedOrder.id}`)
       .then((response) => {
         const newOrders = _.filter(
           orders,
-          (order) => order._id !== deletedOrder._id
+          (order) => order.id !== deletedOrder.id
         )
         setOrders(newOrders)
       })
@@ -77,11 +77,18 @@ const Orders = () => {
 
   const renderOrders = () => {
     return _.map(orders, (order) => {
-      const { created, user, products, _id, notes, shipped } = order
+      const {
+        createdAt,
+        user,
+        products,
+        id,
+        notes,
+        isShipped,
+      } = order
 
       return (
-        <li key={_id} className={styles['order']}>
-          <p>This has {!shipped && 'not '}been shipped.</p>
+        <li key={id} className={styles['order']}>
+          <p>This has {!isShipped && 'not '}been shipped.</p>
           <div className={styles.info}>
             {
               // Address info is based on a user bound to the order
@@ -124,7 +131,7 @@ const Orders = () => {
 
             <div className={styles.infoCreated}>
               <h3 className="heading-tertiary">Created:</h3>
-              <p>{moment(created).format('MMMM Do, YYYY')}</p>
+              <p>{moment(createdAt).format('MMMM Do, YYYY')}</p>
             </div>
           </div>
 
@@ -133,7 +140,7 @@ const Orders = () => {
               className={`${styles.ship} button button-primary`}
               onClick={() => markShipped(order)}
             >
-              Mark {order.shipped && 'not '}shipped
+              Mark {order.isShipped && 'not '}shipped
             </button>
             <button
               className={`${styles.delete} button button-delete`}

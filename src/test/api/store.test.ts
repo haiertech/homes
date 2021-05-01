@@ -15,8 +15,8 @@ const product = {
   title: 'Mocha Test Product',
   content: 'This is some test product content.',
   tags: 'test, product',
-  published: true,
-  mainMedia: 'some-picture.jpg',
+  isPublished: true,
+  media: 'some-picture.jpg',
   price: 2.99,
   quantity: 10,
 }
@@ -33,7 +33,7 @@ describe('/api/store', () => {
       expect(status).to.equal(200) &&
         expect(created.title).to.equal(product.title) &&
         expect(created.content).to.equal(product.content) &&
-        expect(created.mainMedia).to.equal(product.mainMedia) &&
+        expect(created.media).to.equal(product.media) &&
         expect(created.price).to.equal(product.price) &&
         expect(created.quantity).to.equal(product.quantity) &&
         expect(created.tags).to.be.an('array')
@@ -57,7 +57,7 @@ describe('/api/store', () => {
         )
         let allArePublished = true
         _.forEach(products, (found) => {
-          if (!found.published) allArePublished = false
+          if (!found.isPublished) allArePublished = false
         })
 
         expect(status).to.equal(200) &&
@@ -76,7 +76,7 @@ describe('/api/store', () => {
         expect(status).to.equal(200) &&
           expect(found.title).to.equal(product.title) &&
           expect(found.content).to.equal(product.content) &&
-          expect(found.mainMedia).to.equal(product.mainMedia) &&
+          expect(found.media).to.equal(product.media) &&
           expect(found.price).to.equal(product.price) &&
           expect(found.tags).to.be.an('array')
       }).timeout(10000)
@@ -91,7 +91,7 @@ describe('/api/store', () => {
           content: 'This is updated test product content.',
         }
         const { data: updated, status } = await axios.put(
-          `${rootURL}/api/store/products/${found._id}`,
+          `${rootURL}/api/store/products/${found.id}`,
           updatedProduct,
           axiosConfig
         )
@@ -99,9 +99,7 @@ describe('/api/store', () => {
         expect(status).to.equal(200) &&
           expect(updated.title).to.equal(updatedProduct.title) &&
           expect(updated.content).to.equal(updatedProduct.content) &&
-          expect(updated.mainMedia).to.equal(
-            updatedProduct.mainMedia
-          ) &&
+          expect(updated.media).to.equal(updatedProduct.media) &&
           expect(updated.price).to.equal(updatedProduct.price) &&
           expect(updated.quantity).to.equal(
             updatedProduct.quantity
@@ -115,7 +113,7 @@ describe('/api/store', () => {
           axiosConfig
         )
         const { status } = await axios.delete(
-          `${rootURL}/api/store/products/${found._id}`,
+          `${rootURL}/api/store/products/${found.id}`,
           axiosConfig
         )
 
@@ -133,7 +131,7 @@ describe('/api/store', () => {
           axiosConfig
         )
         const { data: cart, status } = await axios.put(
-          `${rootURL}/api/store/cart/${created._id}`,
+          `${rootURL}/api/store/cart/${created.id}`,
           {},
           axiosConfig
         )
@@ -151,7 +149,7 @@ describe('/api/store', () => {
           axiosConfig
         )
         const { data: cart, status } = await axios.delete(
-          `${rootURL}/api/store/cart/${found._id}`,
+          `${rootURL}/api/store/cart/${found.id}`,
           axiosConfig
         )
         const { data: user } = await axios.get(
@@ -159,7 +157,7 @@ describe('/api/store', () => {
           axiosConfig
         )
         await axios.delete(
-          `${rootURL}/api/store/products/${found._id}`,
+          `${rootURL}/api/store/products/${found.id}`,
           axiosConfig
         )
 
@@ -177,7 +175,7 @@ describe('/api/store', () => {
         axiosConfig
       )
       const { data: cart } = await axios.put(
-        `${rootURL}/api/store/cart/${created._id}`,
+        `${rootURL}/api/store/cart/${created.id}`,
         {},
         axiosConfig
       )
@@ -226,13 +224,13 @@ describe('/api/store', () => {
         const [order] = orders
 
         const { data: updatedOrder, status } = await axios.put(
-          `${rootURL}/api/store/orders/${order._id}`,
-          { shipped: true },
+          `${rootURL}/api/store/orders/${order.id}`,
+          { isShipped: true },
           axiosConfig
         )
 
         expect(status).to.equal(200) &&
-          expect(updatedOrder.shipped).to.equal(true)
+          expect(updatedOrder.isShipped).to.equal(true)
       }).timeout(10000)
 
       it('deletes the order', async () => {
@@ -243,7 +241,7 @@ describe('/api/store', () => {
         const [order] = orders
 
         const { data: response, status } = await axios.delete(
-          `${rootURL}/api/store/orders/${order._id}`,
+          `${rootURL}/api/store/orders/${order.id}`,
           axiosConfig
         )
 

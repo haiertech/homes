@@ -1,10 +1,10 @@
-import { Event } from 'types'
+import { Event } from '@/types'
 import React, { useEffect, useContext } from 'react'
 import axios from 'axios'
 import moment from 'moment'
 import { userContext, eventsContext, postsContext } from '@/context'
 import { PageHead } from '@/components'
-import { SectionCards } from '@/Sections'
+import { SectionCards } from '@/components'
 import { usePostFilter } from '@/hooks'
 
 const EventsAllPage = () => {

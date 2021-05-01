@@ -40,7 +40,7 @@ const Layout: React.FC = (props) => {
     if (post.tags && post.tags.includes('section-header')) {
       headerTitle = post.title || ''
       headerSubTitle = post.content || ''
-      logo = post.mainMedia || ''
+      logo = post.media || ''
       titleHeaderContent = ''
 
       if (post.content) {
@@ -49,7 +49,7 @@ const Layout: React.FC = (props) => {
         })}`
       }
       if (!shareImage) {
-        shareImage = post.mainMedia || ''
+        shareImage = post.media || ''
       }
     } else if (post.tags.includes('section-footer')) {
       footerTitle = post.title
@@ -66,8 +66,8 @@ const Layout: React.FC = (props) => {
             keywords.length === 0 ? tag : `${keywords}, ${tag}`
         }
       })
-      if (post.mainMedia) {
-        shareImage = post.mainMedia
+      if (post.media) {
+        shareImage = post.media
       }
     }
   })
@@ -78,12 +78,12 @@ const Layout: React.FC = (props) => {
 
   const renderNotifications = () => {
     return _.map(notifications.posts, (post) => {
-      return <Notification key={post._id} post={post} />
+      return <Notification key={post.id} post={post} />
     })
   }
 
   return (
-    <div className="app">
+    <div className="papyr-app">
       <PageHead
         title={headerTitle}
         titleContent={titleHeaderContent}
@@ -91,6 +91,9 @@ const Layout: React.FC = (props) => {
         description={descriptionContent}
         keywords={keywords}
       >
+        <style>
+          {typeof window !== 'undefined' ? FontAwesome.dom.css() : ''}
+        </style>
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0"

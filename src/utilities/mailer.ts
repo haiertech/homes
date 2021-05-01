@@ -1,7 +1,6 @@
-import { Database, Post } from 'types'
+import { Database, Post, User } from '@/types'
 import nodemailer from 'nodemailer'
 import { google } from 'googleapis'
-import handlebars from 'handlebars'
 import fs from 'fs'
 import keys from '../config/keys'
 const OAuth2 = google.auth.OAuth2
@@ -60,8 +59,10 @@ class Mailer {
 
   async getEmailTemplateByTag(tag: string) {
     // Get all published posts
-    const { Post, findAll } = this.database
-    const posts = await findAll(Post, { published: true })
+    const { EntityType, findAll } = this.database
+    const posts = await findAll<Post>(EntityType.Post, {
+      isPublished: true,
+    })
 
     let template = null
 
@@ -81,8 +82,8 @@ class Mailer {
   }
 
   async sendBulkEmail(post: Post) {
-    const { findAll, User } = this.database
-    const subscribedUsers = await findAll(User, {
+    const { findAll, EntityType } = this.database
+    const subscribedUsers = await findAll<User>(EntityType.User, {
       isSubscribed: true,
     })
 
@@ -132,8 +133,9 @@ class Mailer {
 
     // If we found a post
     if (emailTemplatePost) {
-      html = emailTemplatePost.content
-      emailSubject = handlebars.compile(emailTemplatePost.title)(
+      html = emailTemplatePost.content ?? ''
+      emailSubject = this.parseHTML(
+        emailTemplatePost.title,
         variables
       )
 
@@ -151,9 +153,13 @@ class Mailer {
       }
     }
 
+    // If at this point we have no html, use the plain template
+    if (!html) {
+      html = await this.readHTMLFile('src/emails/plain.html')
+    }
+
     // Fill in the variables to the template
-    const template = handlebars.compile(html)
-    const htmlToSend = template(variables)
+    const htmlToSend = this.parseHTML(html, variables)
 
     // Create an email transporter
     const transporter = await this.createTransporter()
@@ -180,6 +186,13 @@ class Mailer {
 
   async readHTMLFile(path: string) {
     return await fs.readFileSync(path, { encoding: 'utf-8' })
+  }
+
+  parseHTML(html: string, variables: Record<string, any>): string {
+    return Object.keys(variables).reduce((currentHtml, key) => {
+      const value = variables[key]
+      return currentHtml.replace('{{' + key + '}}', value)
+    }, html)
   }
 }
 

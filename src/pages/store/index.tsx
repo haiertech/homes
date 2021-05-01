@@ -1,4 +1,4 @@
-import { Product } from 'types'
+import { Product } from '@/types'
 import React, { useContext, useEffect } from 'react'
 import Link from 'next/link'
 import _ from 'lodash'
@@ -6,7 +6,7 @@ import axios from 'axios'
 import { userContext, storeContext, postsContext } from '@/context'
 import { usePostFilter } from '@/hooks'
 import { PageHead } from '@/components'
-import { SectionCards } from '@/Sections'
+import { SectionCards } from '@/components'
 import styles from './store.module.scss'
 
 const StorePage = () => {
@@ -51,7 +51,7 @@ const StorePage = () => {
   const renderAddToCart = (product: Product) => {
     const quantityInCart = _.filter(
       cart,
-      (cartProduct) => cartProduct._id === product._id
+      (cartProduct) => cartProduct.id === product.id
     ).length
     let message = 'Add to cart'
     if (quantityInCart) message += ` (${quantityInCart} now)`
@@ -74,7 +74,7 @@ const StorePage = () => {
       return (
         <>
           {renderAddToCart(product)}
-          <Link href={`/store/checkout?id=${product._id}`}>
+          <Link href={`/store/checkout?id=${product.id}`}>
             <a>Buy it now</a>
           </Link>
         </>

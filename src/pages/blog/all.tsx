@@ -1,10 +1,10 @@
-import { Blog } from 'types'
+import { Blog } from '@/types'
 import React, { useEffect, useContext } from 'react'
 import axios from 'axios'
 import moment from 'moment'
 import { PageHead } from '@/components'
 import { userContext, blogsContext, postsContext } from '@/context'
-import { SectionCards } from '@/Sections'
+import { SectionCards } from '@/components'
 import { usePostFilter } from '@/hooks'
 
 const BlogAllPage = () => {
@@ -31,9 +31,9 @@ const BlogAllPage = () => {
 
   const renderDate = (post: Blog) => {
     const date =
-      post.published && post.publishDate
-        ? post.publishDate
-        : post.created
+      post.isPublished && post.publishedAt
+        ? post.publishedAt
+        : post.createdAt
 
     return <p>{moment(date).format('MMMM Do, YYYY')}</p>
   }

@@ -1,4 +1,4 @@
-import { Post } from 'types'
+import { Post } from '@/types'
 import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Error from 'next/error'
@@ -29,7 +29,7 @@ const PostsEdit = (props: { post: Post }) => {
     <PostsForm
       pageTitle="Edit Post"
       post={post}
-      apiEndpoint={`/api/posts/${post._id}`}
+      apiEndpoint={`/api/posts/${post.id}`}
       editing
     />
   )

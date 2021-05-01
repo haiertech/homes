@@ -1,11 +1,11 @@
-import { Blog } from 'types'
+import { Blog } from '@/types'
 import React, { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import moment from 'moment'
 import { userContext } from '@/context'
 import keys from '@/keys'
-import { SectionStandard } from '@/Sections'
+import { SectionStandard } from '@/components'
 
 const BlogShow = (props: { blog: Blog }) => {
   const { currentUser } = useContext(userContext)
@@ -26,9 +26,9 @@ const BlogShow = (props: { blog: Blog }) => {
 
   const renderDate = () => {
     const date =
-      blog.published && blog.publishDate
-        ? blog.publishDate
-        : blog.created
+      blog.isPublished && blog.publishedAt
+        ? blog.publishedAt
+        : blog.createdAt
 
     return <p>{moment(date).format('MMMM Do, YYYY')}</p>
   }

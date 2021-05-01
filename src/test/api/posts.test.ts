@@ -15,8 +15,8 @@ const post = {
   title: 'Mocha Test Post',
   content: 'This is some test post content.',
   tags: 'test, post',
-  published: true,
-  mainMedia: 'some-picture.jpg',
+  isPublished: true,
+  media: 'some-picture.jpg',
 }
 
 describe('/api/posts', () => {
@@ -30,7 +30,7 @@ describe('/api/posts', () => {
     expect(status).to.equal(200) &&
       expect(created.title).to.equal(post.title) &&
       expect(created.content).to.equal(post.content) &&
-      expect(created.mainMedia).to.equal(post.mainMedia) &&
+      expect(created.media).to.equal(post.media) &&
       expect(created.tags).to.be.an('array')
   }).timeout(10000)
 
@@ -50,7 +50,7 @@ describe('/api/posts', () => {
       )
       let allArePublished = true
       _.forEach(posts, (found) => {
-        if (!found.published) allArePublished = false
+        if (!found.isPublished) allArePublished = false
       })
 
       expect(status).to.equal(200) &&
@@ -68,7 +68,7 @@ describe('/api/posts', () => {
       expect(status).to.equal(200) &&
         expect(found.title).to.equal(post.title) &&
         expect(found.content).to.equal(post.content) &&
-        expect(found.mainMedia).to.equal(post.mainMedia) &&
+        expect(found.media).to.equal(post.media) &&
         expect(found.tags).to.be.an('array')
     }).timeout(10000)
 
@@ -81,7 +81,7 @@ describe('/api/posts', () => {
         content: 'This is updated test content.',
       }
       const { data: updated, status } = await axios.put(
-        `${rootURL}/api/posts/${found._id}`,
+        `${rootURL}/api/posts/${found.id}`,
         updatedPost,
         axiosConfig
       )
@@ -89,7 +89,7 @@ describe('/api/posts', () => {
       expect(status).to.equal(200) &&
         expect(updated.title).to.equal(updatedPost.title) &&
         expect(updated.content).to.equal(updatedPost.content) &&
-        expect(updated.mainMedia).to.equal(updatedPost.mainMedia) &&
+        expect(updated.media).to.equal(updatedPost.media) &&
         expect(updated.tags).to.be.an('array')
     }).timeout(10000)
 
@@ -98,7 +98,7 @@ describe('/api/posts', () => {
         `${rootURL}/api/posts/mocha-test-post`
       )
       const { status } = await axios.delete(
-        `${rootURL}/api/posts/${found._id}`,
+        `${rootURL}/api/posts/${found.id}`,
         axiosConfig
       )
 

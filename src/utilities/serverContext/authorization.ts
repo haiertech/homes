@@ -1,31 +1,20 @@
-import { Database } from 'types'
+import { Database, User } from '@/types'
 import { NextApiRequest } from 'next'
 import jwt from 'jsonwebtoken'
-import _ from 'lodash'
 import keys from '@/keys'
 
 export default async (req: NextApiRequest, database: Database) => {
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.includes('Bearer ')
-  ) {
-    const token = req.headers.authorization
-      .replace('Bearer ', '')
-
+  if (req.headers.authorization?.toLowerCase().includes('bearer ')) {
     try {
-      const tokenObject = jwt.verify(token, keys.jwtSecret)
-      
-      if (typeof tokenObject === 'string')
-        throw new Error('Invalid token')
-
-      // @ts-ignore yes it does...
+      const [_, token] = req.headers.authorization.split(' ')
+      const tokenObject = jwt.verify(token, keys.jwtSecret) as {
+        uid: string
+      }
       const { uid } = tokenObject
       if (uid) {
-        const { User, findOne } = database
-        const user = await findOne(
-          User,
-          { _id: uid, isBanned: false },
-          { include: ['cart'] }
+        const user = await database.findOne<User>(
+          database.EntityType.User,
+          { id: uid, isBanned: false }
         )
         return user
       }

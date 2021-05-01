@@ -1,4 +1,4 @@
-import { Blog } from 'types'
+import { Blog } from '@/types'
 import React, { useEffect, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import Error from 'next/error'
@@ -30,7 +30,7 @@ const BlogEdit = (props: { blog: Blog }) => {
     <PostsForm
       pageTitle="Edit Blog Post"
       post={blog}
-      apiEndpoint={`/api/blogs/${blog._id}`}
+      apiEndpoint={`/api/blogs/${blog.id}`}
       redirectRoute="/blog/all"
       editing
     />

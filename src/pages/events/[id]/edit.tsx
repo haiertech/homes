@@ -1,4 +1,4 @@
-import { Event } from 'types'
+import { Event } from '@/types'
 import React, { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 import Error from 'next/error'
@@ -86,7 +86,7 @@ const EventsEdit = (props: { event: Event }) => {
     <PostsForm
       pageTitle="Edit Event"
       post={event}
-      apiEndpoint={`/api/events/${event._id}`}
+      apiEndpoint={`/api/events/${event.id}`}
       redirectRoute="/events/all"
       editing
       additionalFields={[coordinatesField, dateField]}

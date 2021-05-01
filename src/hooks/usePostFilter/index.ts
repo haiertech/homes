@@ -1,4 +1,4 @@
-import { Post } from 'types'
+import { Post } from '@/types'
 import _ from 'lodash'
 
 type Filters = {
@@ -22,7 +22,7 @@ const usePostFilter = <T extends Post>(
     if (!showAll) {
       postsToFilter = _.filter(
         postsToFilter,
-        (post) => post.published
+        (post) => post.isPublished
       )
     }
 

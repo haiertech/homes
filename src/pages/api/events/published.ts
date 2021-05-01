@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import serverContext from '@/serverContext'
+import { Event } from '@/types'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { user, settings, done, database } = await serverContext(
@@ -19,16 +20,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       date.getTime() - 2 * 24 * 60 * 60 * 1000
     )
 
-    // TODO - the date condition might need to be revisited when
-    // introducting other DBs. We'll see though
-    const { findAll, Event } = database
+    const { findAll, EntityType } = database
     const conditions = {
-      published: true,
-      date: { $gte: dateFilter },
+      isPublished: true,
+      // date: { $gte: dateFilter },
     }
-    const events = await findAll(Event, conditions, {
-      sort: { date: 1 },
-    })
+    let events = await findAll<Event>(EntityType.Event, conditions)
+    // TODO: apply this filter in the db query
+    events = events.filter(
+      (event) => event.date.getTime() >= dateFilter
+    )
+    events.sort((a, b) => ((a.date || 0) > (b.date || 0) ? -1 : 1))
 
     return await done(200, events)
   }

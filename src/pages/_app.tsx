@@ -6,10 +6,12 @@ import {
   Product,
   SectionOptions,
   Keys,
-} from 'types'
+} from '@/types'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
+import '@fortawesome/fontawesome-free/js/all.min'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 import { Layout } from '@/components'
 import keys from '@/keys'
 import { GlobalState } from '@/context'
@@ -53,6 +55,7 @@ const App = (props: Props) => {
     if (gaInitialized) {
       logPageView()
     }
+    FontAwesome.config.autoAddCss = false
   }, [asPath])
 
   return (
@@ -89,48 +92,10 @@ App.getInitialProps = async ({
   }
 
   if (!!ctx.res) {
-    const { data: publicKeys } = await axios.get(
-      `${rootUrl}/api/utility/publicKeys`
-    )
-    pageProps.keys = publicKeys
-
-    const { data: settings } = await axios.get(
-      `${rootUrl}/api/utility/settings`
-    )
-    pageProps.settings = settings
-
-    const { data: sectionOptions } = await axios.get(
-      `${rootUrl}/api/pages/sectionOptions`
-    )
-    pageProps.sectionOptions = sectionOptions
-
-    const { data: posts } = await axios.get(
-      `${rootUrl}/api/posts/published`
-    )
-    pageProps.posts = posts
-
-    const { data: pages } = await axios.get(`${rootUrl}/api/pages`)
-    pageProps.pages = pages
-
-    if (settings.enableBlog) {
-      const { data: blogs } = await axios.get(
-        `${rootUrl}/api/blogs/published`
-      )
-      pageProps.blogs = blogs
-    }
-
-    if (settings.enableEvents) {
-      const { data: events } = await axios.get(
-        `${rootUrl}/api/events/published`
-      )
-      pageProps.events = events
-    }
-
-    if (settings.enableStore) {
-      const { data: products } = await axios.get(
-        `${rootUrl}/api/store/products/published`
-      )
-      pageProps.products = products
+    const { data } = await axios.get(`${rootUrl}/api/_app`)
+    pageProps = {
+      ...pageProps,
+      ...data,
     }
   }
 
