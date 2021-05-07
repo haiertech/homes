@@ -6,21 +6,24 @@ import {
   Index,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
 import { Blog } from './Blog'
 import { User } from './User'
 import * as types from '@/types'
 import { PapyrEntity } from './PapyrEntity'
+import {
+  DbAwareColumn,
+  DbAwarePGC,
+  sanitizeConditions,
+} from '../utilities'
 
 @Entity()
 export class Comment extends PapyrEntity {
-  @PrimaryGeneratedColumn('uuid')
-  @Index()
+  @DbAwarePGC()
   id!: string
 
-  @Column('text')
+  @DbAwareColumn({ type: 'text' })
   content!: string
 
   @Column()
@@ -63,9 +66,9 @@ export class Comment extends PapyrEntity {
     const commentRepo = getRepository<Comment>('Comment')
     const userRepo = getRepository<User>('User')
     const commentEntities = await commentRepo.find({
-      where: {
+      where: sanitizeConditions({
         replyToId: this.id,
-      },
+      }),
       order: { createdAt: 'DESC' },
     })
     const replies: types.Comment[] = []
@@ -74,14 +77,14 @@ export class Comment extends PapyrEntity {
     }
 
     const authorEntity = await userRepo.findOne({
-      where: {
+      where: sanitizeConditions({
         id: this.authorId,
-      },
+      }),
     })
     const author = (await authorEntity?.toModel()) as types.User
 
     return {
-      id: this.id,
+      id: this.id.toString(),
       content: this.content,
       blogId: this.blogId,
       replies,
@@ -95,11 +98,15 @@ export class Comment extends PapyrEntity {
     comment: types.Comment
   ): Promise<types.Comment> {
     const commentRepo = getRepository<Comment>('Comment')
-    let foundComment = await commentRepo.findOne({
-      where: {
-        id: comment.id,
-      },
-    })
+    let foundComment
+
+    if (comment.id) {
+      foundComment = await commentRepo.findOne({
+        where: sanitizeConditions({
+          id: comment.id,
+        }),
+      })
+    }
 
     if (!foundComment) {
       foundComment = commentRepo.create()

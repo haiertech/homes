@@ -5,18 +5,21 @@ import {
   getRepository,
   Index,
   OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
 import { CartProduct } from './CartProduct'
 import { OrderedProduct } from './OrderedProduct'
 import * as types from '@/types'
 import { PapyrEntity } from './PapyrEntity'
+import {
+  DbAwareColumn,
+  DbAwarePGC,
+  sanitizeConditions,
+} from '../utilities'
 
 @Entity()
 export class Product extends PapyrEntity {
-  @PrimaryGeneratedColumn('uuid')
-  @Index()
+  @DbAwarePGC()
   id!: string
 
   @Column({ default: '' })
@@ -26,7 +29,7 @@ export class Product extends PapyrEntity {
   @Index()
   slug!: string
 
-  @Column('text', { default: '' })
+  @DbAwareColumn({ type: 'text' })
   content!: string
 
   @Column({ default: '' })
@@ -61,7 +64,7 @@ export class Product extends PapyrEntity {
 
   toModel(): types.Product {
     return {
-      id: this.id,
+      id: this.id.toString(),
       title: this.title,
       tags: this.tags.split(',').map((tag) => tag.trim()),
       slug: this.slug,
@@ -79,23 +82,33 @@ export class Product extends PapyrEntity {
     product: types.Product
   ): Promise<types.Product> {
     const productRepo = getRepository<Product>('Product')
-    let foundProduct = await productRepo.findOne({
-      where: {
-        id: product.id,
-      },
-    })
+    let foundProduct
+
+    if (product.id) {
+      foundProduct = await productRepo.findOne({
+        where: sanitizeConditions({
+          id: product.id,
+        }),
+      })
+    }
 
     if (!foundProduct) {
       foundProduct = productRepo.create()
     }
 
     foundProduct.title = product.title
-    foundProduct.content = product.content
+    foundProduct.content = product.content || ''
     foundProduct.slug = product.slug
     foundProduct.tags = product.tags.join(', ')
     foundProduct.media = product.media
     foundProduct.isPublished = product.isPublished
+    if (typeof product.price === 'string') {
+      product.price = parseFloat(product.price)
+    }
     foundProduct.price = product.price
+    if (typeof product.quantity === 'string') {
+      product.quantity = parseInt(product.quantity)
+    }
     foundProduct.quantity = product.quantity
 
     foundProduct = await foundProduct.save()

@@ -5,17 +5,20 @@ import {
   getRepository,
   Index,
   OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
 import { Comment } from './Comment'
 import * as types from '@/types'
 import { PapyrEntity } from './PapyrEntity'
+import {
+  DbAwareColumn,
+  DbAwarePGC,
+  sanitizeConditions,
+} from '../utilities'
 
 @Entity()
 export class Blog extends PapyrEntity {
-  @PrimaryGeneratedColumn('uuid')
-  @Index()
+  @DbAwarePGC()
   id!: string
 
   @Column({ default: '' })
@@ -25,7 +28,7 @@ export class Blog extends PapyrEntity {
   @Index()
   slug!: string
 
-  @Column('text', { default: '' })
+  @DbAwareColumn({ type: 'text' })
   content!: string
 
   @Column({ default: '' })
@@ -52,9 +55,9 @@ export class Blog extends PapyrEntity {
   async toModel(): Promise<types.Blog> {
     const commentRepo = getRepository<Comment>('Comment')
     const commentEntities = await commentRepo.find({
-      where: {
+      where: sanitizeConditions({
         blogId: this.id,
-      },
+      }),
       order: { createdAt: 'DESC' },
     })
     const comments: types.Comment[] = []
@@ -63,7 +66,7 @@ export class Blog extends PapyrEntity {
     }
 
     return {
-      id: this.id,
+      id: this.id.toString(),
       title: this.title,
       tags: this.tags.split(',').map((tag) => tag.trim()),
       slug: this.slug,
@@ -81,11 +84,15 @@ export class Blog extends PapyrEntity {
 
   static async saveFromModel(blog: types.Blog): Promise<types.Blog> {
     const blogRepo = getRepository<Blog>('Blog')
-    let foundBlog = await blogRepo.findOne({
-      where: {
-        id: blog.id,
-      },
-    })
+    let foundBlog
+
+    if (blog.id) {
+      foundBlog = await blogRepo.findOne({
+        where: sanitizeConditions({
+          id: blog.id,
+        }),
+      })
+    }
 
     if (!foundBlog) {
       foundBlog = blogRepo.create()
@@ -95,7 +102,7 @@ export class Blog extends PapyrEntity {
     foundBlog.slug = blog.slug
     foundBlog.tags = blog.tags.join(', ')
     foundBlog.media = blog.media
-    foundBlog.content = blog.content
+    foundBlog.content = blog.content || ''
     foundBlog.isPublished = blog.isPublished
 
     foundBlog.publishedAt =
