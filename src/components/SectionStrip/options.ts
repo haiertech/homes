@@ -22,7 +22,7 @@ export const options: SectionOptions = {
     // maxPosts: null,
     defaultProps: {
       readMore: true,
-      contentLength: 300,
+      contentLength: 1000,
       mediaLeft: true,
     },
   },
