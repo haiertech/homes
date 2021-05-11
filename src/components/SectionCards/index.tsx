@@ -7,6 +7,7 @@ import { Media } from '@/components'
 import styles from './SectionCards.module.scss'
 
 type Props = {
+  className?: string
   posts: Post[]
   contentLength?: number
   emptyMessage?: string
@@ -37,6 +38,7 @@ type Props = {
 
 const SectionCards: React.FC<Props> = (props) => {
   const {
+    className,
     posts,
     contentLength,
     emptyMessage,
@@ -93,12 +95,14 @@ const SectionCards: React.FC<Props> = (props) => {
   const renderMediaSection = (post: Post) => {
     if (post.media) {
       return (
-        <Media
-          className={styles.image}
-          src={post.media}
-          alt={post.title}
-          clickable={clickableMedia}
-        />
+        <div className={styles.imageWrapper}>
+          <Media
+            className={styles.image}
+            src={post.media}
+            alt={post.title}
+            clickable={clickableMedia}
+          />
+        </div>
       )
     }
   }
@@ -156,7 +160,7 @@ const SectionCards: React.FC<Props> = (props) => {
     : styles.list3
 
   return (
-    <section className={styles.section}>
+    <section className={`${className || ''} ${styles.section}`}>
       {beforeTitle()}
       <h2 className={`heading-secondary ${styles.header}`}>
         {title}
