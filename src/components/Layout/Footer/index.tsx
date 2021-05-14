@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import _ from 'lodash'
 import { useRouter } from 'next/router'
 import { Page } from '@/types'
 import { pagesContext } from '@/context'
@@ -15,7 +14,7 @@ const Footer: React.FC<Props> = (props) => {
   const { pages } = useContext(pagesContext)
   const { query } = useRouter()
 
-  const page = _.find(pages, (foundPage) => {
+  const page = pages.find((foundPage) => {
     if (foundPage.route === '') foundPage.route = 'home'
     if (foundPage.route === query.page) return true
   }) as Page
@@ -29,14 +28,19 @@ const Footer: React.FC<Props> = (props) => {
       {/* Footer contact form */}
       <div className={styles.cta}>
         <h2 className={styles.ctaTitle}>{props.footerTitle}</h2>
-        <div>{props.footerContent}</div>
+        <div
+          dangerouslySetInnerHTML={{ __html: props.footerContent }}
+        />
       </div>
 
       {/* Credit section */}
       <div className={styles.credit}>
-        <div className={styles.creditText}>
-          {props.footerCopyrightContent}
-        </div>
+        <div
+          className={styles.creditText}
+          dangerouslySetInnerHTML={{
+            __html: props.footerCopyrightContent,
+          }}
+        />
       </div>
     </footer>
   )

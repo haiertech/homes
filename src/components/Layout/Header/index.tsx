@@ -1,6 +1,5 @@
 import { Page } from '@/types'
 import React, { useContext } from 'react'
-import _ from 'lodash'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Media } from '@/components'
@@ -24,7 +23,7 @@ const Header: React.FC<Props> = (props) => {
   const { pages } = useContext(pagesContext)
   const { query } = useRouter()
 
-  const page = _.find(pages, (foundPage) => {
+  const page = pages.find((foundPage) => {
     if (foundPage.route === '') foundPage.route = 'home'
     if (foundPage.route === query.page) return true
   }) as Page
@@ -111,7 +110,10 @@ const Header: React.FC<Props> = (props) => {
     return (
       <>
         <span className="heading-primary--main">{mainTitle}</span>
-        <span className="heading-primary--sub">{subTitle}</span>
+        <span
+          className="heading-primary--sub"
+          dangerouslySetInnerHTML={{ __html: subTitle }}
+        />
       </>
     )
   }
@@ -119,14 +121,7 @@ const Header: React.FC<Props> = (props) => {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <h1 style={{ display: 'none' }} className="heading-primary">
-          {renderTitle()}
-        </h1>
-        <Media
-          className={styles.brand}
-          alt="logo"
-          src="/images/Homes/Vertical/HaierHomes_v1_Morning.png"
-        />
+        <h1 className="heading-primary">{renderTitle()}</h1>
         {renderNav()}
       </div>
     </header>

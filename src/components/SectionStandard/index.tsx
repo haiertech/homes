@@ -1,10 +1,8 @@
 import { Blog, Post } from '@/types'
 import React, { useContext } from 'react'
 import axios from 'axios'
-import _ from 'lodash'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import renderHTML from 'react-render-html'
 import { userContext, postsContext } from '@/context'
 import { Media, PageHead } from '@/components'
 import { usePostFilter } from '@/hooks'
@@ -120,8 +118,7 @@ const SectionStandard: React.FC<Props> = (props) => {
       axios
         .delete(`${deletePath}/${post.id}`)
         .then((res) => {
-          const newPosts = _.filter(
-            posts,
+          const newPosts = posts.filter(
             (filtered) => filtered.id !== post.id
           )
           setPosts(newPosts)
@@ -155,7 +152,7 @@ const SectionStandard: React.FC<Props> = (props) => {
   }
 
   const renderTags = (post: Post) => {
-    return _.map(post.tags, (tag, i) => {
+    return post.tags.map((tag, i) => {
       if (i < post.tags.length - 1) {
         return <span key={tag}>{tag}, </span>
       } else {
@@ -213,7 +210,7 @@ const SectionStandard: React.FC<Props> = (props) => {
   }
 
   const renderPosts = () => {
-    return _.map(props.posts, (post) => {
+    return props.posts?.map((post) => {
       if (!post) return null
       return (
         <div key={post.id}>
@@ -233,9 +230,10 @@ const SectionStandard: React.FC<Props> = (props) => {
             {aftermedia(post)}
 
             {beforeContent(post)}
-            <div className={styles.content}>
-              {renderHTML(post.content || '')}
-            </div>
+            <div
+              className={styles.content}
+              dangerouslySetInnerHTML={{ __html: post.content ?? '' }}
+            />
             {afterContent(post)}
 
             {renderAuthOptions(post)}

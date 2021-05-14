@@ -1,7 +1,5 @@
 import { Post } from '@/types'
 import React from 'react'
-import _ from 'lodash'
-import renderHTML from 'react-render-html'
 import Link from 'next/link'
 import { Media } from '@/components'
 import styles from './SectionStrip.module.scss'
@@ -147,7 +145,7 @@ const SectionStrip: React.FC<Props> = (props) => {
       return (
         <>
           {beforePostContent(post)}
-          {renderHTML(post.content)}
+          <div dangerouslySetInnerHTML={{ __html: post.content }} />
           {afterPostContent(post)}
         </>
       )
@@ -156,7 +154,7 @@ const SectionStrip: React.FC<Props> = (props) => {
     return (
       <>
         {beforePostContent(post)}
-        {renderHTML(postContent)}
+        <div dangerouslySetInnerHTML={{ __html: postContent }} />
         {afterPostContent(post)}
 
         {beforePostLink(post)}
@@ -180,7 +178,7 @@ const SectionStrip: React.FC<Props> = (props) => {
       )
     }
 
-    return _.map(posts, (post, i) => {
+    return posts.map((post, i) => {
       const postTextClassName = post.media ? styles.text : styles.wide
 
       return (
